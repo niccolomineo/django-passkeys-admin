@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock bodyclass %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href='{% static "passkeys_admin/css/passkeys.css" %}'>
+{% endblock extrastyle %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="module" src='{% static "passkeys_admin/js/passkeys.js" %}'></script>
+{% endblock extrahead %}
+
+{% block nav-sidebar %}
+{% endblock nav-sidebar %}
+
+{% block content %}
+    <p>
+        {% translate "This site is protected by a passkey. Passwords are not accepted here." %}
+    </p>
+    <form id="passkey-login-form" method="post" action="{{ app_path }}">
+        {% csrf_token %}
+        <input type="hidden" name="passkeys" value="">
+        <input type="hidden" name="next" value="{{ next }}">
+        <button
+            type="button"
+            id="passkey-verification-button"
+            class="button"
+            data-begin-url='{% url "admin:passkey_authenticate" %}'
+            data-busy-label="{% translate 'Follow your browser prompt…' %}"
+            data-cancelled-label="{% translate 'Sign-in was cancelled or no passkey was offered.' %}"
+            data-error-label="{% translate 'Sign-in failed. Please try again.' %}"
+        >
+            {% translate "Sign in with a passkey" %}
+        </button>
+    </form>
+    <p
+        id="passkey-verification-status-message"
+        class="passkey-status{% if form.errors %} visible{% endif %}"
+        {% if form.errors %}data-status-enum="error"{% endif %}
+    >
+        {{ form.non_field_errors|join:" " }}
+    </p>
+    <noscript>
+        <p class="passkey-status visible">
+            {% translate "JavaScript is required to sign in with a passkey." %}
+        </p>
+    </noscript>
+{% endblock content %}

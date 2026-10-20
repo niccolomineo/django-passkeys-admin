@@ -1,0 +1,75 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href='{% static "passkeys_admin/css/passkeys.css" %}'>
+{% endblock extrastyle %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="module" src='{% static "passkeys_admin/js/passkeys.js" %}'></script>
+{% endblock extrahead %}
+
+{% block nav-sidebar %}
+{% endblock nav-sidebar %}
+
+{% block content %}
+    <div class="passkey-manage">
+        <p>
+            {% translate "Passkeys are the only way to sign in to this admin. Keep at least two enrolled so losing one device does not lock you out." %}
+        </p>
+        <h2>{% translate "Enrolled passkeys" %}</h2>
+        {% if passkeys %}
+            <table class="passkey-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{% translate "Name" %}</th>
+                        <th scope="col">{% translate "Added" %}</th>
+                        <th scope="col">{% translate "Last used" %}</th>
+                        <th scope="col">{% translate "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for passkey in passkeys %}
+                        <tr>
+                            <td>{{ passkey.name|default:_("Unnamed passkey") }}</td>
+                            <td>{{ passkey.added_on|date:"DATETIME_FORMAT" }}</td>
+                            <td>{{ passkey.last_used|date:"DATETIME_FORMAT"|default:_("Never") }}</td>
+                            <td>
+                                {% if can_delete %}
+                                    <form method="post" action='{% url "admin:passkey_delete" passkey.pk %}'>
+                                        {% csrf_token %}
+                                        <button type="submit" class="button">
+                                            {% translate "Delete" %}
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{% translate "You have no passkeys yet. Enrol one now to secure your admin access." %}</p>
+        {% endif %}
+        <h2>{% translate "Add a passkey" %}</h2>
+        <p>
+            <label for="passkey-name">{% translate "Name this device" %}</label>
+            <input type="text" id="passkey-name" maxlength="255" placeholder="{% translate 'MacBook, YubiKey…' %}">
+        </p>
+        <button
+            type="button"
+            id="passkey-register-button"
+            class="button"
+            data-begin-url='{% url "admin:passkey_register" %}'
+            data-complete-url='{% url "admin:passkey_register_complete" %}'
+            data-csrf-token="{{ csrf_token }}"
+            data-busy-label="{% translate 'Follow your browser prompt…' %}"
+            data-error-label="{% translate 'Enrolment failed. Please try again.' %}"
+        >
+            {% translate "Enrol a new passkey" %}
+        </button>
+        <p id="passkey-register-status-message" class="passkey-status"></p>
+    </div>
+{% endblock content %}
