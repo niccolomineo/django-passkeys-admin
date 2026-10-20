@@ -1,0 +1,31 @@
+.passkey-manage {
+	max-width: 40rem;
+}
+
+.passkey-table {
+	width: 100%;
+	margin-bottom: 2rem;
+}
+
+.passkey-manage .button,
+#passkey-login-form .button {
+	margin: 2px 0;
+	padding: 10px 15px;
+	vertical-align: middle;
+	font-family: var(--font-family-primary);
+	font-weight: normal;
+	font-size: 0.8125rem;
+}
+
+.passkey-status {
+	display: none;
+	margin-top: 1rem;
+}
+
+.passkey-status.visible {
+	display: block;
+}
+
+.passkey-status[data-status-enum="error"] {
+	color: var(--error-fg);
+}

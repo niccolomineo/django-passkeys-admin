@@ -1,0 +1,103 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
+
+[project]
+name = "django-passkeys-admin"
+version = "1.0.0"
+description = "A passkey-only Django admin, built on django-passkeys."
+readme = "README.md"
+keywords = [ "admin", "authentication", "django", "fido2", "passkeys", "passwordless", "webauthn" ]
+license = "MIT"
+license-files = [ "LICENSE" ]
+authors = [ { name = "Niccolò Mineo", email = "niccolo.mineo@gmail.com" } ]
+requires-python = ">=3.12"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Django :: 6.1",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Security",
+  "Typing :: Typed",
+]
+dependencies = [
+  "django>=5.2",
+  "django-passkeys>=2.1,<3",
+]
+urls.Changelog = "https://github.com/niccolomineo/django-passkeys-admin/blob/main/CHANGELOG.md"
+urls.Documentation = "https://github.com/niccolomineo/django-passkeys-admin#readme"
+urls.Homepage = "https://github.com/niccolomineo/django-passkeys-admin"
+urls.Issues = "https://github.com/niccolomineo/django-passkeys-admin/issues"
+
+[dependency-groups]
+dev = [
+  "gha-update~=0.2",
+  "prek~=0.5",
+  { include-group = "test" },
+]
+test = [
+  "coverage[toml]>=7",
+  "tblib>=3",
+  "time-machine>=3",
+  "unbrowsed>=0.1.0a23",
+]
+
+[tool.hatch]
+build.targets.wheel.packages = [ "passkeys_admin" ]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+format.docstring-code-format = true
+lint.select = [
+  "A",   # flake8-builtins
+  "B",   # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "C90", # McCabe cyclomatic complexity
+  "D",   # pydocstyle
+  "DJ",  # flake8-django
+  "E",   # pycodestyle errors
+  "F",   # Pyflakes
+  "I",   # isort
+  "Q",   # flake8-quotes
+  "UP",  # pyupgrade
+  "W",   # pycodestyle warnings
+]
+lint.ignore = [
+  "D203",
+  "D212",
+  "DJ007",
+]
+lint.per-file-ignores."manage.py" = [ "E402" ]
+lint.isort.known-first-party = [ "passkeys_admin" ]
+lint.isort.known-third-party = [ "django", "passkeys" ]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
+
+[tool.typos]
+default.extend-words.cose = "cose"
+
+[tool.bandit]
+exclude_dirs = [ ".venv", "node_modules", "tests" ]
+
+[tool.coverage]
+run.source = [ "passkeys_admin" ]
+run.omit = [
+  "manage.py",
+]
+run.branch = true
+run.concurrency = [ "multiprocessing" ]
+run.parallel = true
+report.fail_under = 100
+report.skip_covered = true
+report.show_missing = true
